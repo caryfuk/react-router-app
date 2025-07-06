@@ -18,7 +18,8 @@
     ],
     "*.{json,css,md}": [
       "biome format --write"
-    ]
+    ],
+    "package-lock.json": []
   },
   "dependencies": {
     "@react-router/node": "^7.5.3",
