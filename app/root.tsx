@@ -1,4 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
+import { useEffect } from "react";
 import {
 	isRouteErrorResponse,
 	Links,
@@ -7,6 +8,7 @@ import {
 	Scripts,
 	ScrollRestoration,
 } from "react-router";
+import { Workbox } from "workbox-window";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -47,6 +49,39 @@ export function Layout({ children }: LayoutProps): ReactElement {
 }
 
 export default function App(): ReactElement {
+	useEffect(() => {
+		// Register service worker and handle updates (only in production)
+		if ("serviceWorker" in navigator && !import.meta.env.DEV) {
+			const wb = new Workbox("/sw.js");
+
+			wb.addEventListener("controlling", () => {
+				// Service worker is controlling the page
+				console.log("Service worker is controlling the page");
+			});
+
+			wb.addEventListener("waiting", () => {
+				// A new service worker is waiting to activate
+				console.log("A new service worker is waiting to activate");
+
+				// Optionally show update notification to user
+				if (
+					confirm(
+						"A new version of the app is available. Would you like to update now?",
+					)
+				) {
+					wb.addEventListener("controlling", () => {
+						window.location.reload();
+					});
+					wb.messageSkipWaiting();
+				}
+			});
+
+			wb.register().catch((error) => {
+				console.error("Service worker registration failed:", error);
+			});
+		}
+	}, []);
+
 	return <Outlet />;
 }
 

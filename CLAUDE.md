@@ -78,7 +78,12 @@ function MyComponent(): JSX.Element {  // Cannot find namespace 'JSX'
 ## 🏗️ Project Structure (Vertical Slice Architecture)
 
 ```
-src/
+app/
+├── components/            # Shared UI components (MUST have prop documentation)
+├── hooks/                # Shared custom hooks (MUST have usage examples)
+├── utils/                # Helper functions (MUST have JSDoc with examples)
+├── types/                # Shared TypeScript types
+├── lib/                  # Third-party library configurations
 ├── features/              # Feature-based modules
 │   └── [feature]/
 │       ├── components/    # Feature components
@@ -87,13 +92,68 @@ src/
 │       ├── schemas/       # Zod validation schemas (MUST document validation rules)
 │       ├── types/         # TypeScript types (MUST document complex types)
 │       └── index.ts       # Public API (MUST have @module documentation)
-├── shared/
-│   ├── components/        # Shared UI components (MUST have prop documentation)
-│   ├── hooks/            # Shared custom hooks (MUST have usage examples)
-│   ├── utils/            # Helper functions (MUST have JSDoc with examples)
-│   └── types/            # Shared TypeScript types
-└── test/                 # Test utilities and setup
+└── routes/               # React Router routes
 ```
+
+## 📁 Absolute Import System (MANDATORY)
+
+### MUST Use Absolute Imports
+- **NEVER use relative imports** beyond the current directory level
+- **ALWAYS use absolute imports** for cross-feature dependencies
+- **MUST use specific path aliases** for better organization
+
+### Path Aliases Configuration
+```typescript
+// Available path aliases (configured in tsconfig.json)
+import { Component } from '~/components/Component';                    // Legacy alias
+import { Component } from '@/components/Component';                    // Shared components
+import { FeatureComponent } from '@/features/auth/components/Button';  // Feature components
+import { useCustomHook } from '@/hooks/useCustomHook';               // Shared hooks
+import { useFeatureHook } from '@/features/auth/hooks/useAuth';       // Feature hooks
+import { utilities } from '@/utils/helpers';                         // Shared utilities
+import { featureUtils } from '@/features/auth/utils/helpers';         // Feature utilities
+import { ApiTypes } from '@/types/api';                              // Shared types
+import { FeatureTypes } from '@/features/auth/types/common';          // Feature types
+import { config } from '@/lib/config';                               // Library configs
+```
+
+### Import Hierarchy (STRICT ORDER)
+1. **External libraries** (React, third-party packages)
+2. **Internal absolute imports** (using @ aliases)
+3. **Relative imports** (only for same-directory files)
+
+```typescript
+// ✅ CORRECT: Proper import order
+import { ReactElement } from 'react';
+import { z } from 'zod';
+
+import { Button } from '@/components/Button';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { ApiResponse } from '@/types/api';
+
+import { LocalHelper } from './LocalHelper';
+import { ComponentStyles } from './Component.styles';
+
+// ❌ FORBIDDEN: Relative imports for cross-feature dependencies
+import { Button } from '../../components/Button';
+import { useAuth } from '../../../features/auth/hooks/useAuth';
+```
+
+### Path Alias Guidelines (MANDATORY)
+- **`~/*`**: Legacy alias for general app directory access
+- **`@/*`**: General app directory access (preferred)
+- **`@/components/*`**: Shared UI components
+- **`@/features/*`**: Feature-specific modules
+- **`@/hooks/*`**: Shared custom React hooks
+- **`@/utils/*`**: Shared helper functions and utilities
+- **`@/types/*`**: Shared TypeScript type definitions
+- **`@/lib/*`**: Third-party library configurations
+
+### FORBIDDEN Import Patterns
+- **NEVER use `../../../` style imports** for cross-feature access
+- **NEVER use relative imports** to access shared utilities/components
+- **NEVER use relative imports** to access other features
+- **NEVER mix relative and absolute imports** for the same module type
 
 ## 🎯 TypeScript Configuration (STRICT REQUIREMENTS) Assume strict requirements even if project settings are looser
 
