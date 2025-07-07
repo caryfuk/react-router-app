@@ -96,7 +96,9 @@
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double"
+      "quoteStyle": "single",
+      "semicolons": "asNeeded",
+      "jsxQuoteStyle": "double"
     }
   },
   "assist": {

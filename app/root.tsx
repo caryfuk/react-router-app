@@ -1,5 +1,5 @@
-import type { ReactElement, ReactNode } from "react";
-import { useEffect } from "react";
+import type { ReactElement, ReactNode } from 'react'
+import { useEffect } from 'react'
 import {
   isRouteErrorResponse,
   Links,
@@ -7,27 +7,27 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "react-router";
-import { Workbox } from "workbox-window";
+} from 'react-router'
+import { Workbox } from 'workbox-window'
 
-import type { Route } from "./+types/root";
-import "./app.css";
+import type { Route } from './+types/root'
+import './app.css'
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
+    rel: 'preconnect',
+    href: 'https://fonts.gstatic.com',
+    crossOrigin: 'anonymous',
   },
   {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    rel: 'stylesheet',
+    href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
   },
-];
+]
 
 interface LayoutProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export function Layout({ children }: LayoutProps): ReactElement {
@@ -45,62 +45,62 @@ export function Layout({ children }: LayoutProps): ReactElement {
         <Scripts />
       </body>
     </html>
-  );
+  )
 }
 
 export default function App(): ReactElement {
   useEffect(() => {
     // Register service worker and handle updates (only in production)
-    if ("serviceWorker" in navigator && !import.meta.env.DEV) {
-      const wb = new Workbox("/sw.js");
+    if ('serviceWorker' in navigator && !import.meta.env.DEV) {
+      const wb = new Workbox('/sw.js')
 
-      wb.addEventListener("controlling", () => {
+      wb.addEventListener('controlling', () => {
         // Service worker is controlling the page
-        console.log("Service worker is controlling the page");
-      });
+        console.log('Service worker is controlling the page')
+      })
 
-      wb.addEventListener("waiting", () => {
+      wb.addEventListener('waiting', () => {
         // A new service worker is waiting to activate
-        console.log("A new service worker is waiting to activate");
+        console.log('A new service worker is waiting to activate')
 
         // Optionally show update notification to user
         if (
           confirm(
-            "A new version of the app is available. Would you like to update now?",
+            'A new version of the app is available. Would you like to update now?',
           )
         ) {
-          wb.addEventListener("controlling", () => {
-            window.location.reload();
-          });
-          wb.messageSkipWaiting();
+          wb.addEventListener('controlling', () => {
+            window.location.reload()
+          })
+          wb.messageSkipWaiting()
         }
-      });
+      })
 
       wb.register().catch((error) => {
-        console.error("Service worker registration failed:", error);
-      });
+        console.error('Service worker registration failed:', error)
+      })
     }
-  }, []);
+  }, [])
 
-  return <Outlet />;
+  return <Outlet />
 }
 
 export function ErrorBoundary({
   error,
 }: Route.ErrorBoundaryProps): ReactElement {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
+  let message = 'Oops!'
+  let details = 'An unexpected error occurred.'
+  let stack: string | undefined
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? '404' : 'Error'
     details =
       error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
+        ? 'The requested page could not be found.'
+        : error.statusText || details
   } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
+    details = error.message
+    stack = error.stack
   }
 
   return (
@@ -113,5 +113,5 @@ export function ErrorBoundary({
         </pre>
       )}
     </main>
-  );
+  )
 }

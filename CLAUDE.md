@@ -59,19 +59,19 @@ With React 19's compiler, manual optimizations are largely unnecessary. Focus on
 
 ```typescript
 // ✅ CORRECT: Modern React 19 typing
-import { ReactElement } from 'react';
+import { ReactElement } from 'react'
 
 function MyComponent(): ReactElement {
-  return <div>Content</div>;
+  return <div>Content</div>
 }
 
 const renderHelper = (): ReactElement | null => {
-  return condition ? <span>Helper</span> : null;
-};
+  return condition ? <span>Helper</span> : null
+}
 
 // ❌ FORBIDDEN: Legacy JSX namespace
 function MyComponent(): JSX.Element {  // Cannot find namespace 'JSX'
-  return <div>Content</div>;
+  return <div>Content</div>
 }
 ```
 
@@ -105,16 +105,16 @@ app/
 ### Path Aliases Configuration
 ```typescript
 // Available path aliases (configured in tsconfig.json)
-import { Component } from '~/components/Component';                    // Legacy alias
-import { Component } from '@/components/Component';                    // Shared components
-import { FeatureComponent } from '@/features/auth/components/Button';  // Feature components
-import { useCustomHook } from '@/hooks/useCustomHook';               // Shared hooks
-import { useFeatureHook } from '@/features/auth/hooks/useAuth';       // Feature hooks
-import { utilities } from '@/utils/helpers';                         // Shared utilities
-import { featureUtils } from '@/features/auth/utils/helpers';         // Feature utilities
-import { ApiTypes } from '@/types/api';                              // Shared types
-import { FeatureTypes } from '@/features/auth/types/common';          // Feature types
-import { config } from '@/lib/config';                               // Library configs
+import { Component } from '~/components/Component'                    // Legacy alias
+import { Component } from '@/components/Component'                    // Shared components
+import { FeatureComponent } from '@/features/auth/components/Button'  // Feature components
+import { useCustomHook } from '@/hooks/useCustomHook'               // Shared hooks
+import { useFeatureHook } from '@/features/auth/hooks/useAuth'       // Feature hooks
+import { utilities } from '@/utils/helpers'                         // Shared utilities
+import { featureUtils } from '@/features/auth/utils/helpers'         // Feature utilities
+import type { ApiTypes } from '@/types/api'                              // Shared types
+import type { FeatureTypes } from '@/features/auth/types/common'          // Feature types
+import { config } from '@/lib/config'                               // Library configs
 ```
 
 ### Import Hierarchy (STRICT ORDER)
@@ -124,19 +124,19 @@ import { config } from '@/lib/config';                               // Library 
 
 ```typescript
 // ✅ CORRECT: Proper import order
-import { ReactElement } from 'react';
-import { z } from 'zod';
+import { ReactElement } from 'react'
+import { z } from 'zod'
 
-import { Button } from '@/components/Button';
-import { useAuth } from '@/features/auth/hooks/useAuth';
-import { ApiResponse } from '@/types/api';
+import { Button } from '@/components/Button'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import type { ApiResponse } from '@/types/api'
 
-import { LocalHelper } from './LocalHelper';
-import { ComponentStyles } from './Component.styles';
+import { LocalHelper } from './LocalHelper'
+import { ComponentStyles } from './Component.styles'
 
 // ❌ FORBIDDEN: Relative imports for cross-feature dependencies
-import { Button } from '../../components/Button';
-import { useAuth } from '../../../features/auth/hooks/useAuth';
+import { Button } from '../../components/Button'
+import { useAuth } from '../../../features/auth/hooks/useAuth'
 ```
 
 ### Path Alias Guidelines (MANDATORY)
@@ -194,10 +194,10 @@ import { useAuth } from '../../../features/auth/hooks/useAuth';
 
 ```typescript
 // ✅ CORRECT: Convert plain types to branded types
-const cvId = CVIdSchema.parse(numericId);
+const cvId = CVIdSchema.parse(numericId)
 
 // ❌ FORBIDDEN: Assuming type without validation
-const cvId: CVId = numericId; // Type assertion without validation
+const cvId: CVId = numericId // Type assertion without validation
 ```
 
 ### ExactOptionalPropertyTypes Compliance (MANDATORY)
@@ -211,8 +211,8 @@ const apiCall = async (data?: string) => {
   return fetch('/api', {
     method: 'POST',
     body: data ? JSON.stringify({ data }) : null,  // null, not undefined
-  });
-};
+  })
+}
 
 // Conditional prop spreading for optional properties
 <Input
@@ -244,13 +244,13 @@ export function FeatureComponent(): ReactElement {
   const { data, isLoading, error } = useQuery({
     queryKey: ['feature'],
     queryFn: fetchFeature
-  });
+  })
 
-  if (isLoading) return <Skeleton />;
-  if (error) return <ErrorBoundary error={error} />;
-  if (!data) return <EmptyState />;
+  if (isLoading) return <Skeleton />
+  if (error) return <ErrorBoundary error={error} />
+  if (!data) return <EmptyState />
 
-  return <FeatureContent data={data} />;
+  return <FeatureContent data={data} />
 }
 
 ## 🛡️ Data Validation with Zod (MANDATORY FOR ALL EXTERNAL DATA)
@@ -265,11 +265,11 @@ export function FeatureComponent(): ReactElement {
 
 ### Schema Example (MANDATORY PATTERNS)
 ```typescript
-import { z } from 'zod';
+import { z } from 'zod'
 
 // MUST use branded types for ALL IDs
-const UserIdSchema = z.string().uuid().brand<'UserId'>();
-type UserId = z.infer<typeof UserIdSchema>;
+const UserIdSchema = z.string().uuid().brand<'UserId'>()
+type UserId = z.infer<typeof UserIdSchema>
 
 // MUST include validation for ALL fields
 export const userSchema = z.object({
@@ -285,9 +285,9 @@ export const userSchema = z.object({
     lastLogin: z.string().datetime(),
     preferences: z.record(z.unknown()).optional(),
   }),
-});
+})
 
-export type User = z.infer<typeof userSchema>;
+export type User = z.infer<typeof userSchema>
 
 // MUST validate ALL API responses
 export const apiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
@@ -296,7 +296,7 @@ export const apiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
     data: dataSchema,
     error: z.string().optional(),
     timestamp: z.string().datetime(),
-  });
+  })
 ```
 
 ## 🧪 Testing Strategy (MANDATORY REQUIREMENTS)
@@ -312,17 +312,35 @@ We don't do any testing at this moment.
 ### Biome Integration (MANDATORY)
 - **Complete Coverage**: All files MUST pass biomejs/biome linting with zero warnings
 
+### Code Formatting Rules (MANDATORY)
+- **Indentation**: 2 spaces (no tabs)
+- **Quote Style**: Single quotes for JavaScript/TypeScript
+- **JSX Quote Style**: Double quotes for JSX attributes
+- **Semicolons**: As needed (automatic semicolon insertion)
+- **Import Organization**: Automatic import sorting enabled
+
+### Specific Linting Rules (ENFORCED)
+- **Type Imports**: MUST use `import type` for type-only imports
+- **Export Types**: MUST use `export type` for type-only exports
+- **Array Types**: MUST use consistent array type syntax
+- **Template Literals**: MUST use template literals over string concatenation
+- **Arrow Functions**: Prefer arrow functions (warn level)
+- **Optional Chaining**: MUST use optional chaining where applicable
+- **Accessibility**: All a11y rules enforced as errors
+- **Security**: `dangerouslySetInnerHTML` forbidden (error level)
+- **Performance**: Accumulating spread operations warned against
+
 ## 🎨 Component Guidelines (STRICT REQUIREMENTS)
 
 ### MANDATORY TypeScript Requirements
 ```typescript
 // ✅ REQUIRED: Explicit types, clear props, separate interface definition
 interface ButtonProps {
-  variant: 'primary' | 'secondary';
-  size?: 'small' | 'medium' | 'large';
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  children: React.ReactNode;
-  disabled?: boolean;
+  variant: 'primary' | 'secondary'
+  size?: 'small' | 'medium' | 'large'
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  children: React.ReactNode
+  disabled?: boolean
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -333,17 +351,17 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
 }) => {
   // Implementation
-};
+}
 
 // ❌ FORBIDDEN: Inline prop types
 const Button = ({ variant, onClick, children }: { variant: string; onClick: () => void; children: React.ReactNode }) => {
   // Implementation
-};
+}
 
 // ❌ FORBIDDEN: Implicit types, loose typing
 const Button = ({ variant, onClick, children }: any) => {
   // Implementation
-};
+}
 ```
 
 ### Component Integration (STRICT REQUIREMENTS)
@@ -354,8 +372,8 @@ const Button = ({ variant, onClick, children }: any) => {
 
 ```typescript
 // ✅ CORRECT: Verify component interface and use exact prop names
-import { EducationList } from './EducationList';
-import { EducationSummary } from './schemas';
+import { EducationList } from './EducationList'
+import type { EducationSummary } from './schemas'
 
 <EducationList
   cvId={cvId}
@@ -394,9 +412,9 @@ import { EducationSummary } from './schemas';
 ```typescript
 // ✅ CORRECT: Separate props interface
 interface WelcomeProps {
-  title: string;
-  subtitle?: string;
-  onAction: (action: string) => void;
+  title: string
+  subtitle?: string
+  onAction: (action: string) => void
 }
 
 export function Welcome({ title, subtitle, onAction }: WelcomeProps): ReactElement {
@@ -405,9 +423,9 @@ export function Welcome({ title, subtitle, onAction }: WelcomeProps): ReactEleme
 
 // ❌ FORBIDDEN: Inline prop types
 export function Welcome({ title, subtitle, onAction }: { 
-  title: string; 
-  subtitle?: string; 
-  onAction: (action: string) => void;
+  title: string
+  subtitle?: string
+  onAction: (action: string) => void
 }): ReactElement {
   // Implementation
 }
